@@ -59,6 +59,13 @@ public class KcpTransportConnection implements Disposable {
     }
 
 
+    public Mono<Void> write(byte[] data){
+        log.info("write:"+ data);
+        KcpTransportMessage message = KcpTransportMessage.builder().message(data).build();
+        return outbound.sendObject(message).then().doOnError(Throwable::printStackTrace);
+    }
+
+
     public Mono<Void> sendPingReq(){
         return outbound.sendObject(new KcpTransportMessage("ping".getBytes(StandardCharsets.UTF_8)).toByteBuf()).then();
     }

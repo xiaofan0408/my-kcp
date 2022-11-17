@@ -39,8 +39,8 @@ public class KcpClientConnection implements KcpClientSession {
         connection.write(KcpTransportMessage.builder().build().toByteBuf())
                 .doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);
-        connection.getConnection().onWriteIdle(clientConfig.getHeart(), () -> connection.sendPingReq().subscribe()); // 发送心跳
-        connection.getConnection().onReadIdle(clientConfig.getHeart()*2, () -> connection.sendPingReq().subscribe()); // 发送心跳
+//        connection.getConnection().onWriteIdle(clientConfig.getHeart(), () -> connection.sendPingReq().subscribe()); // 发送心跳
+//        connection.getConnection().onReadIdle(clientConfig.getHeart()*2, () -> connection.sendPingReq().subscribe()); // 发送心跳
         connection.getConnection().onDispose(()->clientConfig.getOnClose().run());
         inbound.receive().subscribe(byteBuf -> {
             byte[] bytes = new byte[byteBuf.readableBytes()];

@@ -32,11 +32,6 @@ public class ClientTest {
         clientSession.send("hello world".getBytes(StandardCharsets.UTF_8)).subscribe();
         clientSession.send("hello world".getBytes(StandardCharsets.UTF_8)).subscribe();
         clientSession.send("hello world".getBytes(StandardCharsets.UTF_8)).subscribe();
-
-        for (int i =0; i < 1000; i++) {
-            clientSession.send("hello world".getBytes(StandardCharsets.UTF_8)).subscribe();
-        }
-
         System.out.println(1111);
         latch.await();
     }

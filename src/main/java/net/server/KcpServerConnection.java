@@ -76,9 +76,16 @@ public class KcpServerConnection implements KcpServerSession {
                 .ifPresent(KcpTransportConnection::dispose));
     }
 
+    @Override
+    public Mono<Void> onDispose() {
+        return disposableServer.onDispose();
+    }
+
 
     @Override
     public void dispose() {
         disposableServer.dispose();
     }
+
+
 }
