@@ -23,10 +23,9 @@ import java.util.Optional;
 public class KcpTransport {
 
 
-    public Mono<? extends Connection> start(KcpServerConfig config, UnicastProcessor<KcpTransportConnection> connections) {
+    public Mono<? extends Connection> start(KcpServerConfig config) {
         return buildServer(config)
                 .doOnBound(connection -> {
-                    connections.onNext(new KcpTransportConnection(connection));
                 })
                 .bind();
     }

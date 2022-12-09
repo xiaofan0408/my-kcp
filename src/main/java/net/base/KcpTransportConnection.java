@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import net.server.KcpServerSession;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -60,7 +61,7 @@ public class KcpTransportConnection implements Disposable {
 
 
     public Mono<Void> write(byte[] data){
-        log.info("write:"+ data);
+        log.info("write:"+ new String(data));
         KcpTransportMessage message = KcpTransportMessage.builder().message(data).build();
         return outbound.sendObject(message).then().doOnError(Throwable::printStackTrace);
     }
@@ -88,24 +89,6 @@ public class KcpTransportConnection implements Disposable {
     }
 
 
-
-    public  void  saveQos2Message(Integer messageId, KcpTransportMessage message){
-        qos2Message.put(messageId,message);
-    }
-
-
-    public Optional<KcpTransportMessage>  getAndRemoveQos2Message(Integer messageId){
-        KcpTransportMessage message  = qos2Message.get(messageId);
-        qos2Message.remove(messageId);
-        return Optional.ofNullable(message);
-    }
-
-    public  boolean  containQos2Message(Integer messageId,byte[] bytes){
-       return qos2Message.containsKey(messageId);
-    }
-
-
-
     public  void  addDisposable(Integer messageId,Disposable disposable){
         concurrentHashMap.put(messageId,disposable);
     }
@@ -130,6 +113,10 @@ public class KcpTransportConnection implements Disposable {
 
     public  Mono<Void> sendMessage(byte[] message){
         return this.write(new KcpTransportMessage(message));
+    }
+
+    public Connection bind() {
+        return connection.bind();
     }
 
 //    public   Mono<Void> sendMessageRetry(boolean isDup, MqttQoS qoS, boolean isRetain, String topic, byte[] message){

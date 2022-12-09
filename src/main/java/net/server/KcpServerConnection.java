@@ -10,7 +10,6 @@ import net.base.impl.KcpChannelManager;
 import net.utils.AttributeKeys;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.UnicastProcessor;
 import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 
@@ -32,13 +31,12 @@ public class KcpServerConnection implements KcpServerSession {
     private KcpServerMessageRouter messageRouter;
 
 
-    public KcpServerConnection(UnicastProcessor<KcpTransportConnection> connections, Connection server, KcpServerConfig config) {
-        this.disposableServer = server;
+    public KcpServerConnection(KcpServerConfig config, KcpTransportConnection connection) {
+        this.disposableServer = connection.getConnection();
         this.config = config;
         this.channelManager = new KcpChannelManager();
         this.messageRouter = new KcpServerMessageRouter(config);
-        connections.subscribe(this::subscribe);
-
+        subscribe(connection);
     }
 
     private void subscribe(KcpTransportConnection connection) {
@@ -79,6 +77,12 @@ public class KcpServerConnection implements KcpServerSession {
     @Override
     public Mono<Void> onDispose() {
         return disposableServer.onDispose();
+    }
+
+    @Override
+    public KcpServerSession bind() {
+         disposableServer.bind();
+         return this;
     }
 
 

@@ -17,4 +17,6 @@ public interface KcpServerSession extends Disposable {
     Mono<Void> closeConnect(String clientId);
 
     Mono<Void> onDispose();
+
+    KcpServerSession bind();
 }
